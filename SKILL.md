@@ -1,81 +1,81 @@
 ---
 name: video-to-text
-description: 视频转文字工具。使用 bilibili-api 下载B站视频，yt-dlp 下载其他网站视频，FFmpeg 提取音频，faster-whisper 转写为文字。适用于需要将视频内容转换为文本字幕或文档的场景。
+description: Video to text converter. Downloads videos from Bilibili using bilibili-api, from other sites using yt-dlp, then transcribes audio using faster-whisper. Use when you need to convert video content (B站/YouTube/local files) into text transcripts or subtitles.
 ---
 
 # Video to Text
 
-将视频URL或本地文件转换为文字稿。
+Convert video URLs or local files to text transcripts.
 
-## 使用方法
+## Usage
 
 ```bash
-python3 /root/.openclaw/workspace/skills/video-to-text/scripts/video_to_text.py <视频URL或本地文件> [选项]
+python3 scripts/video_to_text.py <video_url_or_local_file> [options]
 ```
 
-## 参数
+## Arguments
 
-| 参数 | 说明 | 默认值 |
-|------|------|--------|
-| `url` | 视频URL或本地文件路径 (必填) | - |
-| `-m, --model` | Whisper模型大小 | `base` |
-| `-l, --language` | 指定语言代码 | 自动检测 |
-| `-o, --output` | 输出文件路径 | 打印到终端 |
-| `--keep-files` | 保留下载的音视频文件 | 否 |
-| `--sessdata` | B站 SESSDATA | 配置文件中 |
-| `--bili-jct` | B站 bili_jct | 配置文件中 |
-| `--budi3` | B站 buvid3 | 配置文件中 |
+| Argument | Description | Default |
+|----------|-------------|---------|
+| url | Video URL or local file path (required) | - |
+| -m, --model | Whisper model size | base |
+| -l, --language | Specify language code | Auto-detect |
+| -o, --output | Output file path | Print to terminal |
+| --keep-files | Keep downloaded audio/video files | No |
+| --sessdata | Bilibili SESSDATA | From config |
+| --bili-jct | Bilibili bili_jct | From config |
+| --buvid3 | Bilibili buvid3 | From config |
 
-## 模型选择
+## Model Selection
 
-| 模型 | 大小 | 速度 | 精度 |
-|------|------|------|------|
-| `tiny` | ~75MB | 最快 | 最低 |
-| `base` | ~150MB | 快 | 一般 |
-| `small` | ~500MB | 中等 | 较好 |
-| `medium` | ~1.5GB | 慢 | 好 |
-| `large` | ~3GB | 最慢 | 最好 |
+| Model | Size | Speed | Accuracy |
+|-------|------|-------|----------|
+| tiny | ~75MB | Fastest | Lowest |
+| base | ~150MB | Fast | Basic |
+| small | ~500MB | Medium | Good |
+| medium | ~1.5GB | Slow | Very Good |
+| large | ~3GB | Slowest | Best |
 
-## 示例
+## Examples
 
 ```bash
-# B站视频（需要认证信息）
+# Bilibili video (requires auth)
 python3 scripts/video_to_text.py "https://www.bilibili.com/video/BVxxx"
 
-# 指定中文模型
+# Specify Chinese language
 python3 scripts/video_to_text.py "https://www.bilibili.com/video/BVxxx" -l zh
 
-# 本地文件
+# Local file
 python3 scripts/video_to_text.py "/path/to/video.mp4" -m small
 
-# 保存到文件
+# Save to file
 python3 scripts/video_to_text.py "https://www.bilibili.com/video/BVxxx" -o result.txt
 ```
 
-## 支持的平台
+## Supported Platforms
 
-- **B站** (bilibili.com) - 需要认证信息
-- **YouTube** - 使用 yt-dlp
-- **抖音/TikTok** - 使用 yt-dlp
-- **Twitter/X** - 使用 yt-dlp
-- 以及 yt-dlp 支持的所有网站
-- **本地文件** - 支持 mp4, wav, m4a, webm, mkv 等格式
+- Bilibili (bilibili.com) - Requires auth
+- YouTube - via yt-dlp
+- TikTok/Douyin - via yt-dlp
+- Twitter/X - via yt-dlp
+- Any site supported by yt-dlp
+- Local files - supports mp4, wav, m4a, webm, mkv, etc.
 
-## B站认证信息配置
+## Bilibili Auth Setup
 
-### 方法1: 配置文件
+### Method 1: Config File
 
-编辑脚本开头的 `BILIBILI_CREDENTIALS` 字典：
+Edit BILIBILI_CREDENTIALS dict in the script:
 
 ```python
 BILIBILI_CREDENTIALS = {
-    "sessdata": "你的SESSDATA",
-    "bili_jct": "你的bili_jct",
-    "buvid3": "你的buvid3"
+    "sessdata": "your_sessdata",
+    "bili_jct": "your_bili_jct",
+    "buvid3": "your_buvid3"
 }
 ```
 
-### 方法2: 命令行参数
+### Method 2: Command Line
 
 ```bash
 python3 scripts/video_to_text.py "https://www.bilibili.com/video/BVxxx" \
@@ -84,25 +84,34 @@ python3 scripts/video_to_text.py "https://www.bilibili.com/video/BVxxx" \
     --buvid3 "xxx"
 ```
 
-### 获取认证信息
+### How to Get Auth Info
 
-1. 登录 B 站网页版 (bilibili.com)
-2. 按 F12 打开开发者工具
-3. Application → Cookies → bilibili.com
-4. 找到以下值：
-   - `SESSDATA`
-   - `bili_jct`
-   - `buvid3`
+1. Login to Bilibili web (bilibili.com)
+2. Press F12 to open Developer Tools
+3. Application -> Cookies -> bilibili.com
+4. Copy these values:
+   - SESSDATA
+   - bili_jct
+   - buvid3
 
-⚠️ **注意**: 这些信息相当于你的登录凭证，请勿泄露给他人！
+WARNING: These are your login credentials. Don't share with others!
 
-## 依赖
+## Installation
 
-- `bilibili-api-python` - B站API调用
-- `yt-dlp` - 通用视频下载
-- `ffmpeg` - 音视频处理
-- `faster-whisper` - 语音转写
-- `aiohttp` - 异步HTTP请求
-- `requests` - HTTP请求
+```bash
+# Install dependencies
+pip3 install bilibili-api-python yt-dlp faster-whisper aiohttp requests
 
-已在服务器上安装完成。
+# Ensure ffmpeg is installed
+# Ubuntu/Debian: sudo apt install ffmpeg
+# CentOS: sudo yum install ffmpeg
+```
+
+## Dependencies
+
+- bilibili-api-python - Bilibili API
+- yt-dlp - Video download
+- ffmpeg - Audio/video processing
+- faster-whisper - Speech transcription
+- aiohttp - Async HTTP
+- requests - HTTP requests
